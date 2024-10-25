@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نشر المنشورات</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        textarea {
+            width: calc(100% - 20px);
+            margin: 10px auto;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #555;
+        }
+        .post {
+            background: #eee;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>نشر منشور جديد</h1>
+        <textarea id="contentInput" placeholder="أدخل المنشور..."></textarea>
+        <button onclick="uploadPost()">نشر</button>
+        <div id="posts"></div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPosts();
+        });
+
+        function loadPosts() {
+            fetch('load.php')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('posts').innerHTML = data;
+                });
+        }
+
+        function uploadPost() {
+            const contentInput = document.getElementById('contentInput');
+            const content = contentInput.value;
+
+            if (content.trim() === "") {
+                alert("يرجى إدخال المنشور!");
+                return;
+            }
+
+            fetch('store.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `content=${encodeURIComponent(content)}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                loadPosts();
+                contentInput.value = '';
+            });
+        }
+    </script>
+</body>
+</html>
